@@ -47,6 +47,7 @@ locally). Set:
 | `TG_SESSION` | the string printed by `login_once.py` in step 2 |
 | `FOLDER_NAME` | name of the Telegram folder to watch (optional, defaults to `Vacancies`) |
 | `KEYWORDS` | comma-separated, case-insensitive, e.g. `project manager,program manager,PMO,менеджер проектов,удаленно,remote` |
+| `EXCLUDE_KEYWORDS` | optional, comma-separated, case-insensitive. A message matching `KEYWORDS` is skipped if it also contains any of these, e.g. `резюме,ищу работу,ищу позицию,candidate,cv` - use this to filter out resume/self-promo posts that happen to contain your role keywords |
 | `GMAIL_USER` | the Gmail address to send/receive digests, e.g. `bilal.magomedov.job@gmail.com` |
 | `GMAIL_APP_PASSWORD` | a Gmail App Password for that account (not the normal login password) - turn on 2-Step Verification at https://myaccount.google.com/security, then generate one at https://myaccount.google.com/apppasswords |
 

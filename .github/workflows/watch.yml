@@ -27,6 +27,7 @@ jobs:
           TG_SESSION: ${{ secrets.TG_SESSION }}
           FOLDER_NAME: ${{ secrets.FOLDER_NAME }}
           KEYWORDS: ${{ secrets.KEYWORDS }}
+          EXCLUDE_KEYWORDS: ${{ secrets.EXCLUDE_KEYWORDS }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
 

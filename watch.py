@@ -18,6 +18,10 @@ environment variables (set as GitHub Actions secrets, see README.md):
                         Telegram folder whose channels should be watched.
   KEYWORDS            - comma-separated, case-insensitive, e.g.
                         "project manager,project management,менеджер проектов,удаленно,remote"
+  EXCLUDE_KEYWORDS    - optional, comma-separated, case-insensitive. A
+                        message matching KEYWORDS is skipped if it also
+                        contains any of these, e.g.
+                        "резюме,ищу работу,ищу позицию,candidate,cv"
   GMAIL_USER          - the mailbox to send FROM and TO, e.g.
                         bilal.magomedov.job@gmail.com
   GMAIL_APP_PASSWORD  - a Gmail App Password for that account (not the
@@ -104,6 +108,7 @@ def main() -> int:
     session_string = os.environ["TG_SESSION"]
     folder_name = os.environ.get("FOLDER_NAME", "Vacancies")
     keywords = [k.strip().lower() for k in os.environ["KEYWORDS"].split(",") if k.strip()]
+    exclude_keywords = [k.strip().lower() for k in os.environ.get("EXCLUDE_KEYWORDS", "").split(",") if k.strip()]
     gmail_user = os.environ["GMAIL_USER"]
     gmail_app_password = os.environ["GMAIL_APP_PASSWORD"]
 
@@ -151,7 +156,7 @@ def main() -> int:
                 if not text:
                     continue
                 lower = text.lower()
-                if any(kw in lower for kw in keywords):
+                if any(kw in lower for kw in keywords) and not any(kw in lower for kw in exclude_keywords):
                     username = getattr(entity, "username", None)
                     link = f"https://t.me/{username}/{m.id}" if username else "(private channel, no link)"
                     snippet = text[:SNIPPET_LEN] + ("..." if len(text) > SNIPPET_LEN else "")
