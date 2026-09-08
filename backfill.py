@@ -10,6 +10,8 @@ Needs the same environment variables as watch.py, plus:
 
   BACKFILL_DATE  - the UTC calendar day to scan, format YYYY-MM-DD,
                    e.g. "2026-09-07"
+
+KEYWORDS and EXCLUDE_KEYWORDS come from keywords.py, same as watch.py.
 """
 import os
 import sys
@@ -18,6 +20,8 @@ from datetime import datetime, timedelta, timezone
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.functions.messages import GetDialogFiltersRequest
+
+from keywords import KEYWORDS, EXCLUDE_KEYWORDS
 
 SNIPPET_LEN = 300
 
@@ -57,8 +61,8 @@ def main() -> int:
     api_hash = os.environ["TG_API_HASH"]
     session_string = os.environ["TG_SESSION"]
     folder_name = os.environ.get("FOLDER_NAME", "Vacancies")
-    keywords = [k.strip().lower() for k in os.environ["KEYWORDS"].split(",") if k.strip()]
-    exclude_keywords = [k.strip().lower() for k in os.environ.get("EXCLUDE_KEYWORDS", "").split(",") if k.strip()]
+    keywords = [k.strip().lower() for k in KEYWORDS if k.strip()]
+    exclude_keywords = [k.strip().lower() for k in EXCLUDE_KEYWORDS if k.strip()]
 
     day_start = datetime.strptime(os.environ["BACKFILL_DATE"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
     day_end = day_start + timedelta(days=1)

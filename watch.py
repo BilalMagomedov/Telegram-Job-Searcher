@@ -16,16 +16,14 @@ environment variables (set as GitHub Actions secrets, see README.md):
   TG_SESSION          - the string printed by login_once.py
   FOLDER_NAME         - optional, defaults to "Vacancies". The name of the
                         Telegram folder whose channels should be watched.
-  KEYWORDS            - comma-separated, case-insensitive, e.g.
-                        "project manager,project management,менеджер проектов,удаленно,remote"
-  EXCLUDE_KEYWORDS    - optional, comma-separated, case-insensitive. A
-                        message matching KEYWORDS is skipped if it also
-                        contains any of these, e.g.
-                        "резюме,ищу работу,ищу позицию,candidate,cv"
   GMAIL_USER          - the mailbox to send FROM and TO, e.g.
                         bilal.magomedov.job@gmail.com
   GMAIL_APP_PASSWORD  - a Gmail App Password for that account (not the
                         normal login password - see README.md)
+
+KEYWORDS and EXCLUDE_KEYWORDS are not secrets - they're hardcoded in
+keywords.py, versioned with the rest of the repo. Update that file (not
+GitHub secrets) when tuning the match list.
 
 State (which messages were already seen per channel) lives in state.json
 next to this script, so the workflow must commit that file back after each
@@ -42,6 +40,8 @@ from pathlib import Path
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.functions.messages import GetDialogFiltersRequest
+
+from keywords import KEYWORDS, EXCLUDE_KEYWORDS
 
 STATE_PATH = Path(__file__).parent / "state.json"
 MAX_MESSAGES_PER_CHANNEL_PER_RUN = 100
@@ -107,8 +107,8 @@ def main() -> int:
     api_hash = os.environ["TG_API_HASH"]
     session_string = os.environ["TG_SESSION"]
     folder_name = os.environ.get("FOLDER_NAME", "Vacancies")
-    keywords = [k.strip().lower() for k in os.environ["KEYWORDS"].split(",") if k.strip()]
-    exclude_keywords = [k.strip().lower() for k in os.environ.get("EXCLUDE_KEYWORDS", "").split(",") if k.strip()]
+    keywords = [k.strip().lower() for k in KEYWORDS if k.strip()]
+    exclude_keywords = [k.strip().lower() for k in EXCLUDE_KEYWORDS if k.strip()]
     gmail_user = os.environ["GMAIL_USER"]
     gmail_app_password = os.environ["GMAIL_APP_PASSWORD"]
 

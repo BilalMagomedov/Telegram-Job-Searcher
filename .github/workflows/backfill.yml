@@ -25,6 +25,4 @@ jobs:
           TG_API_HASH: ${{ secrets.TG_API_HASH }}
           TG_SESSION: ${{ secrets.TG_SESSION }}
           FOLDER_NAME: ${{ secrets.FOLDER_NAME }}
-          KEYWORDS: ${{ secrets.KEYWORDS }}
-          EXCLUDE_KEYWORDS: ${{ secrets.EXCLUDE_KEYWORDS }}
           BACKFILL_DATE: ${{ inputs.date }}

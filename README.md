@@ -46,15 +46,34 @@ locally). Set:
 | `TG_API_HASH` | from step 1 |
 | `TG_SESSION` | the string printed by `login_once.py` in step 2 |
 | `FOLDER_NAME` | name of the Telegram folder to watch (optional, defaults to `Vacancies`) |
-| `KEYWORDS` | comma-separated, case-insensitive, e.g. `project manager,program manager,PMO,менеджер проектов,удаленно,remote` |
-| `EXCLUDE_KEYWORDS` | optional, comma-separated, case-insensitive. A message matching `KEYWORDS` is skipped if it also contains any of these, e.g. `резюме,ищу работу,ищу позицию,candidate,cv` - use this to filter out resume/self-promo posts that happen to contain your role keywords |
 | `GMAIL_USER` | the Gmail address to send/receive digests, e.g. `bilal.magomedov.job@gmail.com` |
 | `GMAIL_APP_PASSWORD` | a Gmail App Password for that account (not the normal login password) - turn on 2-Step Verification at https://myaccount.google.com/security, then generate one at https://myaccount.google.com/apppasswords |
 
-### 4. Run it
+`KEYWORDS` and `EXCLUDE_KEYWORDS` are NOT secrets - see the next section.
+
+### 4. Match keywords (hardcoded in `keywords.py`, not a secret)
+
+`KEYWORDS` (a message must contain at least one) and `EXCLUDE_KEYWORDS` (a
+matching message is dropped if it also contains one of these, used to
+filter out resume/candidate posts) live in `keywords.py` at the repo root,
+versioned like any other code.
+
+**When you add a new channel to the Telegram folder:** pull its last few
+posts, look at the wording and any hashtags it uses, and update
+`keywords.py` accordingly - add role synonyms that channel uses to
+`KEYWORDS`, add any resume/candidate markers specific to it to
+`EXCLUDE_KEYWORDS`, and note the reasoning under `CHANNEL_NOTES` in that
+file. Commit and push; the next scheduled run picks it up automatically.
+
+### 5. Run it
 
 The workflow (`.github/workflows/watch.yml`) runs automatically every 20
 minutes. You can also trigger it manually from the Actions tab, or with
 `gh workflow run watch.yml`. Matches arrive by email with the subject tag
 `[TG-VACANCY]`. `state.json` tracks which messages were already seen per
 channel and is committed back by the workflow after each run.
+
+There's also a one-off `.github/workflows/backfill.yml` (input: a UTC date)
+to scan a specific past day with the current `keywords.py` filters, useful
+when checking whether a keyword change would have caught/excluded the
+right posts. It doesn't touch `state.json` or the regular schedule.
