@@ -1,0 +1,32 @@
+name: Telegram vacancy sample channel (one-off)
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel_ids:
+        description: "Comma-separated channel IDs to sample (from list_channels.py)"
+        required: true
+      count:
+        description: "How many recent posts per channel (default 5)"
+        required: false
+        default: "5"
+
+jobs:
+  sample_channel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - run: python sample_channel.py
+        env:
+          TG_API_ID: ${{ secrets.TG_API_ID }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH }}
+          TG_SESSION: ${{ secrets.TG_SESSION }}
+          SAMPLE_CHANNEL_IDS: ${{ inputs.channel_ids }}
+          SAMPLE_COUNT: ${{ inputs.count }}
