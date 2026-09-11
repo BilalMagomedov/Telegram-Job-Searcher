@@ -30,6 +30,7 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
 
       - name: Save state
+        if: always()
         run: |
           git config user.name "tg-watch-bot"
           git config user.email "tg-watch-bot@users.noreply.github.com"
